@@ -54,6 +54,15 @@ const server = http.createServer((req, res) => {
     // GET /dogs
     if (req.method === 'GET' && req.url === '/dogs') {
       // Your code here
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      return res.end(JSON.stringify(dogs));
+
+      /*
+      fetch("/dogs")
+        .then(res => res.json())
+        .then(resBody => console.log(resBody))
+      */
     }
 
     // GET /dogs/:dogId
@@ -62,13 +71,52 @@ const server = http.createServer((req, res) => {
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
         // Your code here
+
+        let requestedDog = dogs.find(dog => dog.dogId == dogId);
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        return res.end(JSON.stringify(requestedDog));
       }
+
+      /*
+      fetch("/dogs/1")
+        .then(res => res.json())
+        .then(resBody => console.log(resBody))
+      */
     }
 
     // POST /dogs
     if (req.method === 'POST' && req.url === '/dogs') {
       const { name, age } = req.body;
       // Your code here
+      let newId = getNewDogId();
+      let newDog = {
+        dogId: newId,
+        name: name,
+        age: age
+      }
+      dogs.push(newDog);
+
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      return res.end(JSON.stringify(newDog));
+
+      /*
+      fetch(url, [options])
+      fetch("/dogs", {
+        method: "POST",
+          body: new URLSearchParams({
+            name: "Seso",
+            age:  "10"
+          }),
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+      })
+      .then(res => res.json())
+      .then(resBody => console.log(resBody))
+      */
+
     }
 
     // PUT or PATCH /dogs/:dogId
@@ -77,6 +125,30 @@ const server = http.createServer((req, res) => {
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
         // Your code here
+        let requestedDog = dogs.find(dog => dog.dogId == dogId);
+        let { name, age } = req.body;
+        requestedDog.name = name;
+        requestedDog.age = age;
+
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        return res.end(JSON.stringify(requestedDog));
+
+      /*
+      fetch(url, [options])
+      fetch("/dogs/1", {
+        method: "PUT",
+          body: new URLSearchParams({
+            name: "NEW",
+            age:  "99"
+          }),
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+      })
+      .then(res => res.json())
+      .then(resBody => console.log(resBody))
+      */
       }
     }
 
@@ -86,6 +158,20 @@ const server = http.createServer((req, res) => {
       if (urlParts.length === 3) {
         const dogId = urlParts[2];
         // Your code here
+
+        let requestedDogIndex = dogs.findIndex(dog => dog.dogId == dogId);
+        dogs.splice(requestedDogIndex, 1);
+        console.log(dogs);
+
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        return res.end(JSON.stringify("Successfully deleted"));
+
+        /*
+      fetch("/dogs/1", {method: "DELETE"})
+      .then(res => res.json())
+      .then(resBody => console.log(resBody))
+        */
       }
     }
 
